@@ -1,18 +1,22 @@
-import React, { useState, useContext } from 'react';
-import { View, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
-import AuthContext from '../context/AuthContext';
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert } from 'react-native';
+import axios from 'axios';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading } = useContext(AuthContext);
 
   const handleLogin = async () => {
     try {
-      await login(email, password);
+      const response = await axios.post('http://192.168.100.100:5000/api/auth/login', {
+        email,
+        password,
+      });
+      const token = response.data.token;
+      // Save token to AsyncStorage or context
       navigation.navigate('Dashboard');
     } catch (err) {
-      Alert.alert('Error', err.response?.data?.message || 'Something went wrong');
+      Alert.alert('Error', err.response?.data?.error || 'Something went wrong');
     }
   };
 
@@ -31,11 +35,7 @@ const LoginScreen = ({ navigation }) => {
         secureTextEntry
         style={{ marginBottom: 10, padding: 10, borderWidth: 1, borderColor: '#ccc' }}
       />
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <Button title="Login" onPress={handleLogin} />
-      )}
+      <Button title="Login" onPress={handleLogin} />
       <Button title="Signup" onPress={() => navigation.navigate('Signup')} />
     </View>
   );

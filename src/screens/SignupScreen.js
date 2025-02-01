@@ -9,11 +9,15 @@ const SignupScreen = ({ navigation }) => {
 
   const handleSignup = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/register', { username, email, password });
+      const response = await axios.post('http://192.168.100.100:5000/api/auth/register', {
+        username,
+        email,
+        password,
+      });
       Alert.alert('Success', 'User registered successfully');
       navigation.navigate('Login');
     } catch (err) {
-      Alert.alert('Error', err.response?.data?.message || 'Something went wrong');
+      Alert.alert('Error', err.response?.data?.error || 'Something we7nt wrong');
     }
   };
 
